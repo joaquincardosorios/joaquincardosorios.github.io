@@ -153,7 +153,8 @@ function iniciarApp() {
 
             if(existeStorage(idMeal)){
                 eliminarFavorito(idMeal);
-                btnFavorito.textContent = 'Guardar Favorito'
+                btnFavorito.textContent = 'Guardar Favorito';
+                mostratToast('Eliminado Correctamente');
                 return
             }
 
@@ -163,6 +164,7 @@ function iniciarApp() {
                 img: strMealThumb
             });
             btnFavorito.textContent = 'Eliminar Favorito';
+            mostratToast('Agregado Correctamente');
         }
 
         const btnCerrarModal = document.createElement('BUTTON');
@@ -172,8 +174,30 @@ function iniciarApp() {
             modal.hide();
         }
 
+
+        //Boton Exportar PDF
+        const btnExportar = document.createElement('BUTTON');
+        btnExportar.classList.add('btn', 'btn-secondary', 'col');
+        btnExportar.textContent = 'Exportar';
+        btnExportar.onclick = function () {
+            const modalContent = document.querySelector('#modal').innerHTML;
+            const printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>Imprimir modal</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(modalContent);
+            printWindow.document.write('</body></html>');
+
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+
+        }
+
+        
         modalFooter.appendChild(btnFavorito);
         modalFooter.appendChild(btnCerrarModal);
+        modalFooter.appendChild(btnExportar);
 
         // Muestra la receta
         modal.show();
@@ -194,6 +218,14 @@ function iniciarApp() {
         const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
         return favoritos.some(favorito => favorito.id === id);
     } 
+
+    function mostratToast(mensaje){
+        const toastDiv = document.querySelector('#toast');
+        const toastBody = document.querySelector('.toast-body');
+        const toast = new bootstrap.Toast(toastDiv);
+        toastBody.textContent = mensaje;
+        toast.show()
+    }
 
     function limpiarHTML(selector){
         while(selector.firstChild){
