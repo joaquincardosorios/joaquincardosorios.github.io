@@ -1,12 +1,19 @@
 function iniciarApp() {
 
+    const resultado = document.querySelector('#resultado');
+
+    // Solo carga en index.html, donde existe #categorias
     const selectCategorias = document.querySelector('#categorias');
     if(selectCategorias){
         selectCategorias.addEventListener('change', seleccionarCategoria);
         obtenerCategorias();
     }
 
-    const resultado = document.querySelector('#resultado');
+    const favoritosDiv = document.querySelector('.favoritos');
+    if(favoritosDiv){
+        obtenerFavoritos();
+    }
+
     const modal = new bootstrap.Modal('#modal', {})
 
     function obtenerCategorias() {
@@ -53,14 +60,14 @@ function iniciarApp() {
             const recetaImagen = document.createElement('IMG');
             recetaImagen.classList.add('card-img-top');
             recetaImagen.alt = `Imagen de la receta ${strMeal}`;
-            recetaImagen.src = strMealThumb;
+            recetaImagen.src = strMealThumb ?? receta.img;
 
             const recetaCardBody = document.createElement('DIV');
             recetaCardBody.classList.add('card-body')
 
             const recetaHeading = document.createElement('H3');
             recetaHeading.classList.add('card-title', 'mb-3');
-            recetaHeading.textContent = strMeal;
+            recetaHeading.textContent = strMeal ?? receta.title;
 
             const recetaButton = document.createElement('BUTTON');
             recetaButton.classList.add('btn', 'btn-danger', 'w-100');
@@ -70,7 +77,7 @@ function iniciarApp() {
             //recetaButton.dataset.bsToggle = 'modal'
 
             recetaButton.onclick =  function() {
-                seleccionarReceta(idMeal)
+                seleccionarReceta(idMeal ?? receta.id)
             }
 
             // Inyectar en el codigo HTML
@@ -114,7 +121,7 @@ function iniciarApp() {
                     <div class="col-md-8">
                         <div id="instrucciones">
                             <h3 class="my-3">Instrucciones</h3>
-                            <p>${strInstructions}</p>
+                            <p class="text-justify">${strInstructions}</p>
                         </div>
                     </div>
                 </div>
@@ -178,11 +185,12 @@ function iniciarApp() {
 
         //Boton Exportar PDF
         const btnExportar = document.createElement('BUTTON');
-        btnExportar.classList.add('btn', 'btn-secondary', 'col');
+        btnExportar.classList.add('btn', 'btn-primary', 'col');
         btnExportar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
-        <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-        <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
-      </svg> Imprimir`;
+            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+            </svg> Imprimir
+        `;
         btnExportar.onclick = function () {
             const modalContent = document.querySelector('#modal').innerHTML;
             const printWindow = window.open('', '', 'height=400,width=800');
@@ -200,9 +208,8 @@ function iniciarApp() {
 
         
         modalFooter.appendChild(btnFavorito);
-        modalFooter.appendChild(btnCerrarModal);
         modalFooter.appendChild(btnExportar);
-
+        modalFooter.appendChild(btnCerrarModal);
         // Muestra la receta
         modal.show();
     }
@@ -229,6 +236,19 @@ function iniciarApp() {
         const toast = new bootstrap.Toast(toastDiv);
         toastBody.textContent = mensaje;
         toast.show()
+    }
+
+    function obtenerFavoritos(){
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? [];
+        if(favoritos.length){
+            mostrarRecetas(favoritos)
+            return
+        } 
+
+        const noFavoritos = document.createElement('P')
+        noFavoritos.textContent = 'No hay favoritos aun';
+        noFavoritos.classList.add('fs-4', 'text-center', 'font-bold', 'mt-5');
+        favoritosDiv.appendChild(noFavoritos);
     }
 
     function limpiarHTML(selector){
