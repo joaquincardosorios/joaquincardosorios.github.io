@@ -85,13 +85,6 @@ function iniciarApp() {
         })
 
     }
-
-    function limpiarHTML(selector){
-        while(selector.firstChild){
-            selector.removeChild(selector.firstChild)
-        }
-    }
-
     function seleccionarReceta(id){
         const url = `https://themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
         fetch(url)
@@ -109,27 +102,28 @@ function iniciarApp() {
 
         modalTitle.textContent = strMeal;
         modalBody.innerHTML = `
-        <div class="modal-body">
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <img src="${strMealThumb}" alt="receta ${strMeal}" class="img-fluid">
-            <div id="ingredientes">
-              <h3 class="my-3">Ingredientes y Cantidades</h3>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <img src="${strMealThumb}" alt="receta ${strMeal}" class="img-fluid">
+                        <div id="ingredientes">
+                            <h3 class="my-3">Ingredientes y Cantidades</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div id="instrucciones">
+                            <h3 class="my-3">Instrucciones</h3>
+                            <p>${strInstructions}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-8">
-            <div id="instrucciones">
-              <h3 class="my-3">Instrucciones</h3>
-              <p>${strInstructions}</p>
-            </div>
-          </div>
-        </div>
-      </div>
         `; 
 
         const modalBodyIng = document.querySelector('.modal .modal-body #ingredientes');
         const listGroup = document.createElement('UL');
         listGroup.classList.add('list-group');
+
         //Mostrar ingredientes
         for(let i = 1; i<=20 ; i++){
             if(receta[`strIngredient${i}`]){
@@ -154,6 +148,15 @@ function iniciarApp() {
         btnFavorito.classList.add('btn', 'btn-danger', 'col');
         btnFavorito.textContent = 'Guardar Favorito'
 
+        // localStorage
+        btnFavorito.onclick = function() {
+            agregarFavorito({
+                id: idMeal,
+                title: strMeal,
+                img: strMealThumb
+            });
+        }
+
         const btnCerrarModal = document.createElement('BUTTON');
         btnCerrarModal.classList.add('btn', 'btn-secondary', 'col');
         btnCerrarModal.textContent = 'Cerrar'
@@ -166,6 +169,17 @@ function iniciarApp() {
 
         // Muestra la receta
         modal.show();
+    }
+
+    function agregarFavorito(receta){
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) ?? []
+        localStorage.setItem('favoritos', JSON.stringify([... favoritos, receta]))
+    }
+
+    function limpiarHTML(selector){
+        while(selector.firstChild){
+            selector.removeChild(selector.firstChild)
+        }
     }
 }
 
