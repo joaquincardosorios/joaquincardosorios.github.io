@@ -1,5 +1,6 @@
 const resultado = document.querySelector('#resultado');
 const formulario = document.querySelector('#formulario');
+const paginacionDiv = document.querySelector('#paginacion');
 
 const registrosPorPagina = 40;
 let totalPaginas;
@@ -46,7 +47,7 @@ function mostrarAlerta(mensaje) {
 }
 function buscarImagenes(termino) {
     const key = '35313468-e9d074455f8222ad8457e5d3b';
-    const url = `https://pixabay.com/api/?key=${key}&q=${termino}`;
+    const url = `https://pixabay.com/api/?key=${key}&q=${termino}&per_page=${registrosPorPagina}`;
 
     fetch(url)
         .then(respuesta => respuesta.json())
@@ -78,18 +79,17 @@ function mostrarImagenes(imagenes){
 
         resultado.innerHTML += `
 
-            <div class="col-lg-3 col-md-4 col-sm-6 p-2 mb-3">
-                <div class="bg-white change-overlay">
+            <div class="">
                     <a 
                         class=""
                         href="${largeImageURL}" 
                         target="_blank" 
                         rel="noopener noreferer"
                     ><img 
-                        class="w-100" 
+                        class="img-fluid w-100 change-hover " 
                         src="${previewURL}">
                     </a>
-
+                    <div class="bg-white">
                     <div class="p-2">
                         <p class="fw-bold mb-0">${likes}<span class="fw-light"> Me gusta</span></p>
                         <p class="fw-bold mb-0">${views}<span class="fw-light"> Vistos</span></p>
@@ -99,10 +99,33 @@ function mostrarImagenes(imagenes){
 
         `
     });
-
+    // Limpiar paginador previo
+    while(paginacionDiv.firstChild){
+        paginacionDiv.removeChild(paginacionDiv.firstChild)
+    }
     imprimirPaginador();
 }
 
 function imprimirPaginador(){
     iterador = crearPaginador(totalPaginas);
+    const listaPaginacion = document.createElement('UL');
+    listaPaginacion.classList.add('pagination','pagination-lg','justify-content-center','flex-wrap')
+    while(true){
+        const {value, done} = iterador.next();
+        if(done) return;
+
+        // Genera un boton por cada elemento en el generador
+        const enumLista = document.createElement('li');
+        enumLista.classList.add('page-item');
+        const boton = document.createElement('A');
+        boton.classList.add('page-link','bg-warning','bg-gradient-warning', 'text-white')
+        boton.href = '#';
+        boton.dataset.pagina = value;
+        boton.textContent = value;
+        enumLista.appendChild(boton)
+        listaPaginacion.appendChild(enumLista)
+        paginacionDiv.appendChild(listaPaginacion)
+    }
+
+    
 }

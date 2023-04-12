@@ -31,3 +31,38 @@ body,
 .btn-link:active:focus, .btn-link.active:focus {
   background-color: rgba(0,0,0,.05);
 }
+
+.change-hover:hover{
+  opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+.gallery {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 10px;
+}
+
+.gallery div{
+  max-width: 150px;
+  border-radius: 0px 0px 10px 10px;
+}
+
+.gallery div img{
+  width: 100%;
+  max-width: 150px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.gallery::after {
+  content: "";
+  width: 350px;
+}
