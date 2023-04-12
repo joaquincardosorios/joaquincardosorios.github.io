@@ -31,3 +31,8 @@ body,
 .btn-link:active:focus, .btn-link.active:focus {
   background-color: rgba(0,0,0,.05);
 }
+
+.change-hover:hover{
+  opacity: 0.5;
+    filter: alpha(opacity=50);
+}

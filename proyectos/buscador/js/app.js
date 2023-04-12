@@ -51,5 +51,38 @@ function buscarImagenes(termino) {
         })
 }
 function mostrarImagenes(imagenes){
-    console.log(imagenes)
+
+    // Limpiar resultados anteriores
+    while(resultado.firstChild){
+        resultado.removeChild(resultado.firstChild)
+    }
+
+    // Iterar sobre arreglo de imagenes y construir HTML
+    imagenes.forEach(imagen => {
+
+        const { previewURL, likes, views, largeImageURL } = imagen;
+
+        resultado.innerHTML += `
+
+            <div class="col-lg-3 col-md-4 col-sm-6 p-2 mb-3">
+                <div class="bg-white change-overlay">
+                    <a 
+                        class=""
+                        href="${largeImageURL}" 
+                        target="_blank" 
+                        rel="noopener noreferer"
+                    ><img 
+                        class="w-100" 
+                        src="${previewURL}">
+                    </a>
+
+                    <div class="p-2">
+                        <p class="fw-bold mb-0">${likes}<span class="fw-light"> Me gusta</span></p>
+                        <p class="fw-bold mb-0">${views}<span class="fw-light"> Vistos</span></p>
+                    </div>
+                </div>
+            </div>
+
+        `
+    });
 }
