@@ -86,17 +86,25 @@ function mostrarAlerta(mensaje){
     
 }
 
-function consultarAPI(){
+async function consultarAPI(){
     const {moneda, criptomoneda} = objBusqueda;
     url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`
 
     mostrarSpinner()
 
-    fetch(url)
-        .then(respuesta => respuesta.json())
-        .then(cotizacion => {
-            mostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda])
-        })
+    // fetch(url)
+    //     .then(respuesta => respuesta.json())
+    //     .then(cotizacion => {
+    //         mostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda])
+    //     })
+
+    try {
+        const respuesta = await fetch(url);
+        const cotizacion = await respuesta.json();
+        mostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda])
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 function mostrarCotizacionHTML(cotizacion){
