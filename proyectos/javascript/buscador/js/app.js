@@ -46,24 +46,34 @@ function mostrarAlerta(mensaje) {
 
     
 }
-function buscarImagenes() {
+async function buscarImagenes() {
 
     const termino = document.querySelector('#termino').value;
 
     const key = '35313468-e9d074455f8222ad8457e5d3b';
     const url = `https://pixabay.com/api/?key=${key}&q=${termino}&per_page=${registrosPorPagina}&page=${paginaActual}`;
 
-    fetch(url)
-        .then(respuesta => respuesta.json())
-        .then(resultado => {
-            totalPaginas = Math.ceil( resultado.totalHits / registrosPorPagina );
-            mostrarImagenes(resultado.hits);
-        })
+    // fetch(url)
+    //     .then(respuesta => respuesta.json())
+    //     .then(resultado => {
+    //         totalPaginas = Math.ceil( resultado.totalHits / registrosPorPagina );
+    //         mostrarImagenes(resultado.hits);
+    //     })
+    try {
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        totalPaginas = Math.ceil( resultado.totalHits / registrosPorPagina );
+        mostrarImagenes(resultado.hits);
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+
 }
 
 // Registra la cantidad e elementos de acuerdo a las paginas
 function *crearPaginador(total){
-    console.log(total)
     for (let i= 1; i <= total; i++){
         yield i;
     }
